@@ -9,12 +9,18 @@ app.use(express.json());
 app.use(cors());
 
 app.post("/device-info", (req, res) => {
-  const {serialNumber} =req.body;
+  const {serialNumber, deviceName} =req.body;
 
   if (!serialNumber) {
     return res.status(400).json({error: "Serial number is required"});
   }
-  res.json({ receivedSerialNumber: serialNumber });
+
+  else if (!deviceName) {
+    return res.status(400).json({error: "Device name is required"});
+  }
+
+  res.json({ receivedSerialNumber: serialNumber, 
+             receivedDeviceName: deviceName});
 });
 
 const PORT = 3000;
