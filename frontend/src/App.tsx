@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
 
 function App() {
   const [serialNumber, setSerialNumber] = useState("");
   const [deviceName, setDeviceName] = useState("");
-  const [response, setResponse] = useState("");
+  const [response, setResponse] = useState(null);
 
   const handleSubmit = async () => {
     try {
@@ -17,21 +17,26 @@ function App() {
       if (!res.ok) throw new Error("Network response was not ok");
 
       const data = await res.json();
-      setResponse(JSON.stringify(data, null, 2));
+      setResponse(data);
+
+      // ✅ If backend returns webUIUrl, open it in a new tab
+      if (data.webUIUrl) {
+        window.open(data.webUIUrl, "_blank");
+      }
     } catch (err) {
-      setResponse("Error: " + err);
+      setResponse({ error: err.message });
     }
   };
 
   return (
-    <div style={{padding: "2rem", fontfamily: "sans-serif"}}>
+    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>Teltonika Device Interface</h1>
 
       <input
         type="text"
         placeholder="Serial Number"
         value={serialNumber}
-        onChange={(e)=>setSerialNumber(e.target.value)}
+        onChange={(e) => setSerialNumber(e.target.value)}
         style={{ marginRight: "1rem", marginBottom: "1rem" }}
       />
 
@@ -44,13 +49,21 @@ function App() {
       />
 
       <button onClick={handleSubmit}>Open Interface</button>
-      
-      <pre style={{ marginTop: "1rem", background: "#f0f0f0", padding: "1rem" }}>
-        {response}
-      </pre>
-      
-    </div>
-  )
 
+      {response && (
+        <pre
+          style={{
+            marginTop: "1rem",
+            background: "#f0f0f0",
+            padding: "1rem",
+            borderRadius: "8px",
+          }}
+        >
+          {JSON.stringify(response, null, 2)}
+        </pre>
+      )}
+    </div>
+  );
 }
-export default App
+
+export default App;
