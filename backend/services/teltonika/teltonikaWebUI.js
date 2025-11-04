@@ -41,12 +41,14 @@ export async function generateWebUiLink(accessId, duration = 3600) {
     const sessionsResp = await fetch(
       `${BASE_URL}/devices/connect/${accessId}/sessions?active=true`,
       {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${API_KEY}`,
           "Content-Type": "application/json",
         },
       }
     );
+
 
     if (!sessionsResp.ok) {
       const text = await sessionsResp.text();
